@@ -60,11 +60,10 @@ app.get('/message/:id', function(req, res) {
             }
         },
         function(error, response, body) {
-            if(error) {
+            if (error) {
                 console.log("Feil:" + error);
             } else {
-                getLikesForMessage(id,function(likes) {
-                    body.likes = likes;
+                getLikesForMessage(body, function() {
                     res.json(body);
                 });
             }
@@ -77,9 +76,9 @@ app.get('/message/:id', function(req, res) {
 var port = process.env.PORT || 1339;
 app.listen(port);
 
-function getLikesForMessage(id, callback) {
+function getLikesForMessage(messageBody, callback) {
     request.get({
-            url: url + "/api/messages/" + id + "/likes",
+            url: url + "/api/messages/" + messageBody.id + "/likes",
             json: true,
             'auth': {
                 'user': username,
@@ -91,7 +90,8 @@ function getLikesForMessage(id, callback) {
             if (error) {
                 console.log("Feil:" + error);
             }
-            callback(body);
+            messageBody.likes = body;
+            callback();
         }
     );
 }
