@@ -1,4 +1,3 @@
-
 var express = require('express');
 var request = require('request');
 var app = express();
@@ -44,7 +43,7 @@ app.get('/messages', function(req, res) {
             res.json(body);
         }
     );
- 
+
 });
 
 app.get('/message/:id', function(req, res) {
@@ -63,14 +62,36 @@ app.get('/message/:id', function(req, res) {
         function(error, response, body) {
             if(error) {
                 console.log("Feil:" + error);
+            } else {
+                getLikesForMessage(id,function(likes) {
+                    body.likes = likes;
+                    res.json(body);
+                });
             }
-            res.json(body);
         }
     );
 
 });
 
-
 // if on heroku use heroku port.
 var port = process.env.PORT || 1339;
 app.listen(port);
+
+function getLikesForMessage(id, callback) {
+    request.get({
+            url: url + "/api/messages/" + id + "/likes",
+            json: true,
+            'auth': {
+                'user': username,
+                'pass': password,
+                'sendImmediately': false
+            }
+        },
+        function (error, response, body) {
+            if (error) {
+                console.log("Feil:" + error);
+            }
+            callback(body);
+        }
+    );
+}
