@@ -4,7 +4,7 @@ var request = require('request');
 var app = express();
 
 var username = process.env.SOCIALCAST_USERNAME;
-var password = process.env.SOCIALCAST_PASSSWORD;
+var password = process.env.SOCIALCAST_PASSWORD;
 var url = process.env.SOCIALCAST_URL;
 
 var demo_url = "https://api.github.com/users/bekkopen/repos";
@@ -34,7 +34,7 @@ app.get('/messages', function(req, res) {
             'auth': {
                 'user': username,
                 'pass': password,
-                'sendImmediately': true
+                'sendImmediately': false
             }
         },
         function(error, response, body) {
