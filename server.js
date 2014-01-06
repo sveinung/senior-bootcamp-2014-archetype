@@ -10,6 +10,7 @@ var username = process.env.SOCIALCAST_USERNAME;
 var password = process.env.SOCIALCAST_PASSWORD;
 var url = process.env.SOCIALCAST_URL;
 
+process.setMaxListeners(0);
 console.log(username, password, url);
 
 ansattListe.cacheAnsattliste();
