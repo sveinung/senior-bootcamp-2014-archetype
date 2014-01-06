@@ -22,6 +22,10 @@ app.get('/', function(req, res) {
 
 });
 
+app.get('/messages', function(req, res) {
+  console.log("-- Got request: ", req);
+});
+
 
 // if on heroku use heroku port.
 var port = process.env.PORT || 1339;
