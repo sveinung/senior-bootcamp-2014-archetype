@@ -1,5 +1,6 @@
 var express = require('express');
 var request = require('request');
+var async = require('async');
 var app = express();
 
 var username = process.env.SOCIALCAST_USERNAME;
@@ -36,11 +37,14 @@ app.get('/messages', function(req, res) {
                 'sendImmediately': false
             }
         },
-        function(error, response, body) {
+        function(error, response, messageList) {
             if(error) {
                 console.log("Feil:" + error);
+            } else {
+                async.map(messageList, getLikesForMessage, function(err, messageListWithLikes) {
+                    res.json(messageListWithLikes);
+                });
             }
-            res.json(body);
         }
     );
 
@@ -59,12 +63,12 @@ app.get('/message/:id', function(req, res) {
                 'sendImmediately': false
             }
         },
-        function(error, response, body) {
+        function(error, response, message) {
             if (error) {
                 console.log("Feil:" + error);
             } else {
-                getLikesForMessage(body, function() {
-                    res.json(body);
+                getLikesForMessage(message, function(err, messageWithLikes) {
+                    res.json(messageWithLikes);
                 });
             }
         }
@@ -76,9 +80,9 @@ app.get('/message/:id', function(req, res) {
 var port = process.env.PORT || 1339;
 app.listen(port);
 
-function getLikesForMessage(messageBody, callback) {
+function getLikesForMessage(message, callback) {
     request.get({
-            url: url + "/api/messages/" + messageBody.id + "/likes",
+            url: url + "/api/messages/" + message.id + "/likes",
             json: true,
             'auth': {
                 'user': username,
@@ -86,12 +90,12 @@ function getLikesForMessage(messageBody, callback) {
                 'sendImmediately': false
             }
         },
-        function (error, response, body) {
+        function (error, response, likesForMessage) {
             if (error) {
                 console.log("Feil:" + error);
             }
-            messageBody.likes = body;
-            callback();
+            message.likes = likesForMessage;
+            callback(error, message);
         }
     );
 }
