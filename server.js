@@ -3,11 +3,15 @@ var request = require('request');
 var async = require('async');
 var app = express();
 
+var ansattListe = require('./app/ansattListe');
+
 var username = process.env.SOCIALCAST_USERNAME;
 var password = process.env.SOCIALCAST_PASSWORD;
 var url = process.env.SOCIALCAST_URL;
 
 console.log(username, password, url);
+
+ansattListe.cacheAnsattliste();
 
 var demo_url = "https://api.github.com/users/bekkopen/repos";
 app.get('/', function(req, res) {
@@ -67,8 +71,17 @@ app.get('/message/:id', function(req, res) {
             if (error) {
                 console.log("Feil:" + error);
             } else {
-                getLikesForMessage(message, function(err, messageWithLikes) {
-                    res.json(messageWithLikes);
+                getLikesForMessage(id,function(likes) {
+                    body.likes = likes;
+
+                    var name = body.user.name;
+
+                    ansattListe.findAnsatt(name, function(ansatt) {
+                        body.user.senioritet = ansatt.Seniority;
+                        body.user.avdeling = ansatt.Department;
+
+                        res.json(body);
+                    });
                 });
             }
         }
