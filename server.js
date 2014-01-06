@@ -3,6 +3,9 @@ var express = require('express');
 var request = require('request');
 var app = express();
 
+var username = process.env.SOCIALCAST_USERNAME;
+var password = process.env.SOCIALCAST_PASSSWORD;
+var url = process.env.SOCIALCAST_URL;
 
 var demo_url = "https://api.github.com/users/bekkopen/repos";
 app.get('/', function(req, res) {
@@ -23,7 +26,25 @@ app.get('/', function(req, res) {
 });
 
 app.get('/messages', function(req, res) {
-  console.log("-- Got request: ", req);
+  // console.log("-- Got request: ", req);
+    
+    request.get({
+            url: url + "/api/messages",
+            json: true,
+            'auth': {
+                'user': username,
+                'pass': password,
+                'sendImmediately': true
+            }
+        },
+        function(error, response, body) {
+            if(error) {
+                console.log("Feil:" + error);
+            }
+            res.json(body);
+        }
+    );
+ 
 });
 
 
