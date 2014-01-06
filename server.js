@@ -71,16 +71,14 @@ app.get('/message/:id', function(req, res) {
             if (error) {
                 console.log("Feil:" + error);
             } else {
-                getLikesForMessage(id,function(likes) {
-                    body.likes = likes;
-
-                    var name = body.user.name;
+                getLikesForMessage(message, function(err, messageWithLikes) {
+                    var name = messageWithLikes.user.name;
 
                     ansattListe.findAnsatt(name, function(ansatt) {
-                        body.user.senioritet = ansatt.Seniority;
-                        body.user.avdeling = ansatt.Department;
+                        messageWithLikes.user.senioritet = ansatt.Seniority;
+                        messageWithLikes.user.avdeling = ansatt.Department;
 
-                        res.json(body);
+                        res.json(messageWithLikes);
                     });
                 });
             }
