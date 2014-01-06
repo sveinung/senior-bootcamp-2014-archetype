@@ -10,6 +10,11 @@ var findAnsatt = function(name, callback) {
 		return ansatt.Name == name;
 	});
 
+    if (_.isUndefined(ansatt)) {
+        callback(undefined);
+        return;
+    }
+
 	request.get({
 		url: ansattliste_url + "/employee/" + ansatt.Id,
 		json: true

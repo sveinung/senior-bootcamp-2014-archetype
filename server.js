@@ -1,6 +1,7 @@
 var express = require('express');
 var request = require('request');
 var async = require('async');
+var _ = require('underscore');
 var app = express();
 
 var ansattListe = require('./app/ansattListe');
@@ -74,9 +75,11 @@ app.get('/message/:id', function(req, res) {
                 getLikesForMessage(message, function(err, messageWithLikes) {
                     var name = messageWithLikes.user.name;
 
-                    ansattListe.findAnsatt(name, function(ansatt) {
-                        messageWithLikes.user.senioritet = ansatt.Seniority;
-                        messageWithLikes.user.avdeling = ansatt.Department;
+                    ansattListe.findAnsatt(name, function (ansatt) {
+                        if (!_.isUndefined(ansatt)) {
+                            messageWithLikes.user.senioritet = ansatt.Seniority;
+                            messageWithLikes.user.avdeling = ansatt.Department;
+                        }
 
                         res.json(messageWithLikes);
                     });
