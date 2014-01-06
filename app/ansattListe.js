@@ -5,9 +5,13 @@ var ansattliste_url = process.env.ANSATTLISTE_URL;
 
 var ansattListe = "Hah";
 
-var findAnsatt = function(name, callback) {
-	var ansatt = _.find(ansattListe, function(ansatt) {
-		return ansatt.Name == name;
+var findAnsatt = function (name, callback) {
+    var temp = name.split(" ");
+    var fornavn = temp[0];
+    var etternavn = temp[temp.length - 1];
+    
+    var ansatt = _.find(ansattListe, function (ansatt) {        
+        return ansatt.Name.indexOf(fornavn) > -1 && ansatt.Name.indexOf(etternavn) > -1;
 	});
 
     if (_.isUndefined(ansatt)) {
