@@ -70,10 +70,7 @@ app.get('/messages', function(req, res) {
 
 });
 
-app.get('/message/:id', function(req, res) {
-
-    var id = req.params.id;
-
+function retrieveMessageFromSC(id, res) {
     request.get({
             url: url + "/api/messages/" + id,
             json: true,
@@ -83,11 +80,11 @@ app.get('/message/:id', function(req, res) {
                 'sendImmediately': false
             }
         },
-        function(error, response, message) {
+        function (error, response, message) {
             if (error) {
                 console.log("Feil:" + error);
             } else {
-                getLikesForMessage(message, function(err, messageWithLikes) {
+                getLikesForMessage(message, function (err, messageWithLikes) {
                     var name = messageWithLikes.user.name;
 
                     ansattListe.findAnsatt(name, function (ansatt) {
@@ -102,7 +99,23 @@ app.get('/message/:id', function(req, res) {
             }
         }
     );
+}
+app.get('/message/:id', function(req, res) {
 
+    var id = req.params.id;
+
+    MongoClient.connect(mongourl, function(err, db) {
+        var collection = db.collection("messagesCollection");
+        collection.findOne({"id": parseInt(id)}, function(err, message) {
+            if (message) {
+                console.log("message with id " + id + " found in db, returning that doc");
+                res.json(message);
+            } else {
+                console.log("message with id " + id + " not found in db, fetching from SC");
+                retrieveMessageFromSC(id, res);
+            }
+        });
+    });
 });
 
 
@@ -116,7 +129,6 @@ app.post('/push', function(req, res) {
         });
         res.send(200);
     });
-
 });
 
 // if on heroku use heroku port.
