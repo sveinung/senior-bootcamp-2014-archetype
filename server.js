@@ -15,6 +15,8 @@ console.log(username, password, url);
 
 ansattListe.cacheAnsattliste();
 
+var likesCache = {};
+
 var demo_url = "https://api.github.com/users/bekkopen/repos";
 app.get('/', function(req, res) {
   request.get({
@@ -96,7 +98,10 @@ var port = process.env.PORT || 1339;
 app.listen(port);
 
 function getLikesForMessage(message, callback) {
-    request.get({
+
+    var cachedLikes = likesCache[message.id];
+    if (_.isUndefined(cachedLikes)) {
+        request.get({
             url: url + "/api/messages/" + message.id + "/likes",
             json: true,
             'auth': {
@@ -110,7 +115,19 @@ function getLikesForMessage(message, callback) {
                 console.log("Feil:" + error);
             }
             message.likes = likesForMessage;
+
+            console.log("Caching: ", message.id);
+            likesCache[message.id] = likesForMessage;
+
             callback(error, message);
         }
-    );
+        );
+
+    } else {
+        console.log("Henter fra cache ", message.id);
+
+        message.likes = cachedLikes;
+
+        callback(undefined, message);
+    }
 }
