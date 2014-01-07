@@ -16,6 +16,7 @@ function saveMessage(message, callback) {
         var collection = db.collection("messagesCollection");
         collection.update({id: parseInt(message.id)}, message, {upsert: true}, function (err, res) {
         });
+        console.log("saved message with id: " + message.id);
         callback();
     });
 }
@@ -23,6 +24,7 @@ function saveMessage(message, callback) {
 function findMessageById(id, callback) {
     MongoClient.connect(mongourl, function (err, db) {
         var collection = db.collection("messagesCollection");
+        console.log("trying to find message with ID " + id);
         collection.findOne({"id": parseInt(id)}, callback);
     });
 }

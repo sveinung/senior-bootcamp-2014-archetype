@@ -53,7 +53,9 @@ app.get('/messages', function(req, res) {
                 console.log("Feil:" + error);
             } else {
                 async.map(messageList, getLikesForMessage, function(err, messageListWithLikes) {
-                    res.json(messageListWithLikes);
+                    async.each(messageListWithLikes, messageDB.saveMessage, function() {
+                        res.json(messageListWithLikes);
+                    });
                 });
             }
         }
@@ -84,7 +86,9 @@ function retrieveMessageFromSC(id, res) {
                             messageWithLikes.user.avdeling = ansatt.Department;
                         }
 
-                        res.json(messageWithLikes);
+                        messageDB.saveMessage(messageWithLikes, function() {
+                            res.json(messageWithLikes);
+                        });
                     });
                 });
             }
