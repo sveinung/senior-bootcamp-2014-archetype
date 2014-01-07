@@ -3,23 +3,24 @@ var request = require('request');
 var async = require('async');
 var _ = require('underscore');
 var app = express();
-
 var Db = require('mongodb').Db,
-   MongoClient = require('mongodb').MongoClient,
-   Server = require('mongodb').Server,
-   ReplSetServers = require('mongodb').ReplSetServers,
-   ObjectID = require('mongodb').ObjectID,
-   Binary = require('mongodb').Binary,
-   GridStore = require('mongodb').GridStore,
-   Grid = require('mongodb').Grid,
-   Code = require('mongodb').Code,
-   BSON = require('mongodb').pure().BSON;
+    MongoClient = require('mongodb').MongoClient,
+    Server = require('mongodb').Server,
+    ObjectID = require('mongodb').ObjectID,
+    Binary = require('mongodb').Binary,
+    GridStore = require('mongodb').GridStore,
+    Grid = require('mongodb').Grid,
+    Code = require('mongodb').Code,
+    BSON = require('mongodb').pure().BSON;
+
+app.use(express.bodyParser());
 
 var ansattListe = require('./app/ansattListe');
 
 var username = process.env.SOCIALCAST_USERNAME;
 var password = process.env.SOCIALCAST_PASSWORD;
 var url = process.env.SOCIALCAST_URL;
+var mongourl = process.env.MONGOLAB_URI;
 
 process.setMaxListeners(0);
 console.log(username, password, url);
@@ -101,6 +102,20 @@ app.get('/message/:id', function(req, res) {
             }
         }
     );
+
+});
+
+
+app.post('/push', function(req, res) {
+
+    var messageFromPost = JSON.parse(req.body.data);
+
+    MongoClient.connect(mongourl, function(err, db) {
+        var collection = db.collection("messagesCollection");
+        collection.insert(messageFromPost, function(err, res) {
+        });
+        res.send(200);
+    });
 
 });
 
