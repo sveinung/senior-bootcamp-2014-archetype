@@ -6,6 +6,8 @@ var app = express();
 
 app.use(express.bodyParser());
 
+app.use(express.static('public'));
+
 var ansattListe = require('./app/ansattListe');
 var messageDB = require('./app/messageDB');
 
