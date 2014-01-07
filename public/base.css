@@ -29,6 +29,7 @@
     border-width: 0;
     background-color: #666;
     outline-width: 0;
+    margin-bottom: 1em;
 }
 .btn:focus { background-color: #444; }
 .btn:active { background-color: #333; }

@@ -4,6 +4,7 @@
 	<meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <script src="vendor/jquery-1.10.2.js"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <link rel="stylesheet" href="vendor/normalize.css">
     <link rel="stylesheet" href="base.css">
     <title>Vis bilen:</title>
@@ -16,6 +17,34 @@
 			<input id="navn" class="input">
 			<button id="soek" class="btn">Søk</button>
 		</div>
+		<image id="resultat">
 	</div>
+
+	<script>
+		google.load("search", "1");
+		var searcher;
+
+		jQuery(function() {
+			$("#soek").click(soekHandler);
+			searcher = new google.search.ImageSearch();
+		});
+
+		function soekHandler(event) {
+			var navn = $("#navn").val();
+			$.ajax("/bil").done(merkeReceivedHandler);
+		}
+
+		function merkeReceivedHandler(data) {
+			var merke = data.merke;
+
+			searcher.setSearchCompleteCallback(this, searchResultsReceived, null);
+			searcher.execute(merke);
+		}
+
+		function searchResultsReceived() {
+			console.log(searcher.results);
+			$("#resultat").attr("src", searcher.results[0].url)
+		}
+	</script>
 </body>
 </html>
