@@ -1,6 +1,6 @@
 .input {
     display: block;
-    width: 100%;
+    width: 10em;
     height: 2.5em;
     border: 0.2em solid #ccc;
     margin-bottom: 0.5em;
@@ -22,3 +22,13 @@
     width: 80%;
     margin: 0 10% 0 10%;
 }
+
+.btn {
+    height: 2.5em;
+    color: #fff;
+    border-width: 0;
+    background-color: #666;
+    outline-width: 0;
+}
+.btn:focus { background-color: #444; }
+.btn:active { background-color: #333; }
