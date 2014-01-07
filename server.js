@@ -125,7 +125,7 @@ app.post('/push', function(req, res) {
 
     MongoClient.connect(mongourl, function(err, db) {
         var collection = db.collection("messagesCollection");
-        collection.insert(messageFromPost, function(err, res) {
+        collection.update({id: parseInt(messageFromPost.id)}, messageFromPost, {upsert: true}, function(err, res) {
         });
         res.send(200);
     });
