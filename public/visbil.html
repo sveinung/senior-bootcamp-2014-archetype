@@ -31,7 +31,7 @@
 
 		function soekHandler(event) {
 			var navn = $("#navn").val();
-			$.ajax("/bil").done(merkeReceivedHandler);
+			$.ajax("/bil/?navn=" + navn).done(merkeReceivedHandler);
 		}
 
 		function merkeReceivedHandler(data) {
