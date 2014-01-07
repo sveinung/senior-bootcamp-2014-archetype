@@ -120,6 +120,12 @@ app.post('/push', function (req, res) {
     })
 });
 
+
+app.get('/bil', function (req, res) {
+    var mock = { merke:"VOLKSWAGEN GOLF"};
+    res.json(mock);
+});
+
 // if on heroku use heroku port.
 var port = process.env.PORT || 1339;
 app.listen(port);
