@@ -54,6 +54,6 @@ var cacheAnsattliste = function() {
 };
 
 module.exports = {
-	findAnsatt: findAnsatt,
-	cacheAnsattliste: cacheAnsattliste
+    findAnsatt: findAnsatt,
+    cacheAnsattliste: cacheAnsattliste
 };

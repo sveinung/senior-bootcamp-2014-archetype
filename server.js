@@ -21,24 +21,24 @@ ansattListe.cacheAnsattliste();
 var likesCache = {};
 
 var demo_url = "https://api.github.com/users/bekkopen/repos";
-app.get('/', function(req, res) {
-  request.get({
-    url: demo_url,
-    json: true,
-    headers: {
+app.get('/', function (req, res) {
+    request.get({
+        url: demo_url,
+        json: true,
+        headers: {
             'User-Agent': 'request'
-                }
-    }, function(error, response, body) {
-      if(error) {
-        console.log("an error has occured. keep calm and carry on.");
-      }
-      res.json(body);
+        }
+    }, function (error, response, body) {
+        if (error) {
+            console.log("an error has occured. keep calm and carry on.");
+        }
+        res.json(body);
     });
 
 
 });
 
-app.get('/messages', function(req, res) {
+app.get('/messages', function (req, res) {
     request.get({
             url: url + "/api/messages",
             json: true,
@@ -48,12 +48,12 @@ app.get('/messages', function(req, res) {
                 'sendImmediately': false
             }
         },
-        function(error, response, messageList) {
-            if(error) {
+        function (error, response, messageList) {
+            if (error) {
                 console.log("Feil:" + error);
             } else {
-                async.map(messageList, getLikesForMessage, function(err, messageListWithLikes) {
-                    async.each(messageListWithLikes, messageDB.saveMessage, function() {
+                async.map(messageList, getLikesForMessage, function (err, messageListWithLikes) {
+                    async.each(messageListWithLikes, messageDB.saveMessage, function () {
                         res.json(messageListWithLikes);
                     });
                 });
@@ -86,7 +86,7 @@ function retrieveMessageFromSC(id, res) {
                             messageWithLikes.user.avdeling = ansatt.Department;
                         }
 
-                        messageDB.saveMessage(messageWithLikes, function() {
+                        messageDB.saveMessage(messageWithLikes, function () {
                             res.json(messageWithLikes);
                         });
                     });
@@ -95,11 +95,11 @@ function retrieveMessageFromSC(id, res) {
         }
     );
 }
-app.get('/message/:id', function(req, res) {
+app.get('/message/:id', function (req, res) {
 
     var id = req.params.id;
 
-    messageDB.findMessageById(id, function(err, message) {
+    messageDB.findMessageById(id, function (err, message) {
         if (message) {
             console.log("message with id " + id + " found in db, returning that doc");
             res.json(message);
@@ -111,11 +111,11 @@ app.get('/message/:id', function(req, res) {
 });
 
 
-app.post('/push', function(req, res) {
+app.post('/push', function (req, res) {
 
     var messageFromPost = JSON.parse(req.body.data);
 
-    messageDB.saveMessage(messageFromPost, function() {
+    messageDB.saveMessage(messageFromPost, function () {
         res.send(200);
     })
 });
@@ -129,25 +129,25 @@ function getLikesForMessage(message, callback) {
     var cachedLikes = likesCache[message.id];
     if (_.isUndefined(cachedLikes)) {
         request.get({
-            url: url + "/api/messages/" + message.id + "/likes",
-            json: true,
-            'auth': {
-                'user': username,
-                'pass': password,
-                'sendImmediately': false
-            }
-        },
-        function (error, response, likesForMessage) {
-            if (error) {
-                console.log("Feil:" + error);
-            }
-            message.likes = likesForMessage;
+                url: url + "/api/messages/" + message.id + "/likes",
+                json: true,
+                'auth': {
+                    'user': username,
+                    'pass': password,
+                    'sendImmediately': false
+                }
+            },
+            function (error, response, likesForMessage) {
+                if (error) {
+                    console.log("Feil:" + error);
+                }
+                message.likes = likesForMessage;
 
-            console.log("Caching: ", message.id);
-            likesCache[message.id] = likesForMessage;
+                console.log("Caching: ", message.id);
+                likesCache[message.id] = likesForMessage;
 
-            callback(error, message);
-        }
+                callback(error, message);
+            }
         );
 
     } else {
