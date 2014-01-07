@@ -16,6 +16,7 @@ var Db = require('mongodb').Db,
 app.use(express.bodyParser());
 
 var ansattListe = require('./app/ansattListe');
+var messageDB = require('./app/messageDB');
 
 var username = process.env.SOCIALCAST_USERNAME;
 var password = process.env.SOCIALCAST_PASSWORD;
@@ -123,12 +124,9 @@ app.post('/push', function(req, res) {
 
     var messageFromPost = JSON.parse(req.body.data);
 
-    MongoClient.connect(mongourl, function(err, db) {
-        var collection = db.collection("messagesCollection");
-        collection.update({id: parseInt(messageFromPost.id)}, messageFromPost, {upsert: true}, function(err, res) {
-        });
+    messageDB.saveMessage(messageFromPost, function() {
         res.send(200);
-    });
+    })
 });
 
 // if on heroku use heroku port.
