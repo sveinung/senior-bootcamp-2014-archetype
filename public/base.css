@@ -1,5 +1,4 @@
 .input {
-    display: block;
     width: 10em;
     height: 2.5em;
     border: 0.2em solid #ccc;
@@ -24,7 +23,8 @@
 }
 
 .btn {
-    height: 2.5em;
+    height: 3em;
+    width: 5em;
     color: #fff;
     border-width: 0;
     background-color: #666;
