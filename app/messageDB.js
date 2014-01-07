@@ -12,14 +12,22 @@ var mongourl = process.env.MONGOLAB_URI;
 
 function saveMessage(message, callback) {
 
-    MongoClient.connect(mongourl, function(err, db) {
+    MongoClient.connect(mongourl, function (err, db) {
         var collection = db.collection("messagesCollection");
-        collection.update({id: parseInt(message.id)}, message, {upsert: true}, function(err, res) {
+        collection.update({id: parseInt(message.id)}, message, {upsert: true}, function (err, res) {
         });
         callback();
     });
 }
 
+function findMessageById(id, callback) {
+    MongoClient.connect(mongourl, function (err, db) {
+        var collection = db.collection("messagesCollection");
+        collection.findOne({"id": parseInt(id)}, callback);
+    });
+}
+
 module.exports = {
-    saveMessage: saveMessage
+    saveMessage: saveMessage,
+    findMessageById: findMessageById
 };
